@@ -10,12 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-from distutils.command.config import config
 from pathlib import Path
 import os
 # import django_heroku
 import dj_database_url
 from decouple import config,Csv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-qfz52%b-(e4vfx$zv)l%j94c0qf5pi7sx1bu)s)hyn=#)tbo*!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Management',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -76,9 +78,20 @@ WSGI_APPLICATION = 'Admission.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-if config('MODE') == 'DEV':
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+MODE = config("MODE", default="dev")
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+# development
+if config('MODE') == "dev":
     DATABASES = {
-         'default': {
+        'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': config('DB_NAME'),
             'USER': config('DB_USER'),
@@ -88,10 +101,14 @@ if config('MODE') == 'DEV':
         }
     }
 
-# else:
-#     DATABASES = {
-#         'default': dj_database_url.config(default=config('DATABASE_URL'))
-#     }
+# production
+else:
+    DATABASES = {
+        'default': dj_database_url.config(default=config('DATABASE_URL'))
+    }
+
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -120,14 +137,24 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+# USE_TZ = True
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+AUTH_USER_MODEL='Management.User'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
