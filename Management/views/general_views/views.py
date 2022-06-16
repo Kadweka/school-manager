@@ -4,9 +4,9 @@ from urllib import response
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializer.serializers import DepartmentSerializer, EmployeeSerializer,JobTitleSerializer,UserSerializer,InstitutionSerializer
+from ...serializer.general_serializer.serializers import DepartmentSerializer, EmployeeSerializer,JobTitleSerializer,UserSerializer,InstitutionSerializer
 from rest_framework.response import Response
-from .models import User
+from ...models import User
 from rest_framework.exceptions import AuthenticationFailed
 import jwt,datetime,requests
 from rest_framework import permissions, exceptions
@@ -76,7 +76,7 @@ class LoginView(APIView):
             raise AuthenticationFailed("Incorrect Password")
         else:
             payload={
-                'id':user.id,
+                'id':user.code,
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
                 'iat':datetime.datetime.utcnow()
             }
@@ -108,3 +108,5 @@ class LogoutView(APIView):
             "message":"Successfully Logout"
         }
         return response
+
+# UPDATING OUR CLASS RECORDS 
