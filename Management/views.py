@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from .models import User
 from rest_framework.exceptions import AuthenticationFailed
 import jwt,datetime,requests
+from rest_framework import permissions, exceptions
 
 # Create your views here.
 class HellowView(APIView):
@@ -23,31 +24,47 @@ class InstitutionView(APIView):
         return Response(serializer.data)
 class DepartmentView(APIView):
     def post(self,request):
-        serializer=DepartmentSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        if not request.user.is_authenticated:
+            raise exceptions.PermissionDenied({
+                "code":401,
+                "Message":'UnAuthorized'
+            })
+        else:
+            serializer=DepartmentSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
         return Response(serializer.data)
 class JobTitleView(APIView):
     def post(self,request):
-        serializer=JobTitleSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        if not request.user.is_authenticated:
+            raise exceptions.PermissionDenied({
+                "code":401,
+                "Message":'UnAuthorized'
+            })
+        else:
+            serializer=JobTitleSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
 class EmployeeView(APIView):
     def post(self,request):
-        serializer=EmployeeSerializer(data=request.data)
-        print("TESTING 320",request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
+        if not request.user.is_authenticated:
+            raise exceptions.PermissionDenied({
+                "code":401,
+                "Message":'UnAuthorized'
+            })
+        else:
+            serializer=EmployeeSerializer(data=request.data)
+            print("TESTING 320",request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
 class RegisterView(APIView):
     def post(self,request):
         serializer=UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-
 class LoginView(APIView):
     def post(self,request):
         email = request.data['email']
