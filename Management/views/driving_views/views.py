@@ -4,7 +4,7 @@ from urllib import response
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from ...serializer.driving_serializer.serializers import CourseSerializer
+from ...serializer.driving_serializer.serializers import CourseSerializer, NtsaChargesSerializer
 from rest_framework.response import Response
 from ...models import User
 from rest_framework.exceptions import AuthenticationFailed
@@ -13,15 +13,29 @@ from rest_framework import permissions, exceptions
 
 
 
+# class CourseView(APIView):
+#     def post(self,request):
+#         if not request.user.is_authenticated:
+#             raise exceptions.PermissionDenied({
+#                 "code":401,
+#                 "Message":'UnAuthorized'
+#             })
+#         else:
+#             serializer=CourseSerializer(data=request.data)
+#             serializer.is_valid(raise_exception=True)
+#             serializer.save()
+#             return Response(serializer.data)
+
 class CourseView(APIView):
     def post(self,request):
-        if not request.user.is_authenticated:
-            raise exceptions.PermissionDenied({
-                "code":401,
-                "Message":'UnAuthorized'
-            })
-        else:
-            serializer=CourseSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+        serializer=CourseSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+class NtsaView(APIView):
+    def post(self,request):
+        serializer=NtsaChargesSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)

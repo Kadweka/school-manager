@@ -10,22 +10,26 @@ from ..general_models.models import InstitutionData
 
 
 
-class CourseData(models.Model):
+
+class NtsaCharges(models.Model):
     name=models.CharField(max_length=255)
     code=models.CharField(max_length=25,primary_key=True)
-    description=models.CharField(max_length=255,help_text="What the course Entails")
-    total_payable=models.IntegerField(help_text="Total amount of the course")
     institution_code=models.ForeignKey(InstitutionData,on_delete=models.CASCADE)
+    amount=models.IntegerField(help_text="Prices Per NTSA Charge")
     def __str__(self):
         return self.name
 def pre_save_create_course_code(sender,instance,*args,**kwargs):
     if not instance.code:
         instance.code=unique_new_code_generator(instance)
-pre_save.connect(pre_save_create_course_code,sender=CourseData)
-class NtsaCharges(models.Model):
+pre_save.connect(pre_save_create_course_code,sender=NtsaCharges)
+class CourseData(models.Model):
     name=models.CharField(max_length=255)
     code=models.CharField(max_length=25,primary_key=True)
-    amount=models.IntegerField(help_text="Prices Per NTSA Charge")
+    description=models.CharField(max_length=255,help_text="What the course Entails")
+    duration=models.CharField(max_length=255,help_text="What the course Duration")
+    total_payable=models.IntegerField(help_text="Total amount of the course")
+    institution_code=models.ForeignKey(InstitutionData,on_delete=models.CASCADE)
+    ntsacharges_code=models.ForeignKey(NtsaCharges,on_delete=models.CASCADE)
     def __str__(self):
         return self.name
 def pre_save_create_course_code(sender,instance,*args,**kwargs):

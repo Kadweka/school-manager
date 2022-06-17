@@ -2,6 +2,7 @@ from datetime import datetime
 from lib2to3.pgen2 import token
 from urllib import response
 from django.shortcuts import render
+from Management.serializer.driving_serializer.serializers import CourseSerializer, NtsaChargesSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from ...serializer.general_serializer.serializers import DepartmentSerializer, EmployeeSerializer,JobTitleSerializer,UserSerializer,InstitutionSerializer
